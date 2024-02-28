@@ -77,21 +77,36 @@ public class FileUploadController {
 
     @GetMapping("/oneRandomBackwards")
     public ResponseEntity<String> oneRandomBackwards() throws IOException {
+        if(!fileUploadService.hasFile()){
+            return ResponseEntity.badRequest().body("It is necessary to upload at least one file");
+        }
+
         return ResponseEntity.ok(fileUploadService.oneRandomBackwards());
     }
 
     @GetMapping("/longest100lines")
     public ResponseEntity<List<String>> longest100lines() throws IOException {
+        if(!fileUploadService.hasFile()){
+            return ResponseEntity.badRequest().body(Arrays.asList("It is necessary to upload at least one file"));
+        }
+
         return ResponseEntity.ok(fileUploadService.longest100lines());
     }
 
     @GetMapping("/longest20LinesOneFile")
     public ResponseEntity<List<String>> longest20LinesOneFile() throws IOException {
+        if(!fileUploadService.hasFile()){
+            return ResponseEntity.badRequest().body(Arrays.asList("It is necessary to upload at least one file"));
+        }
+
         return ResponseEntity.ok(fileUploadService.longest20LinesOneFile());
     }
 
     @GetMapping(path = "/oneRandomLine", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_PLAIN_VALUE, MediaType.ALL_VALUE})
     public ResponseEntity<String> oneRandomLine(@RequestHeader(value = "Accept") String acceptHeader) throws IOException {
+        if(!fileUploadService.hasFile()){
+            return ResponseEntity.badRequest().body("It is necessary to upload at least one file");
+        }
 
         FileInformation fileInformation = fileUploadService.oneRandomLine();
 

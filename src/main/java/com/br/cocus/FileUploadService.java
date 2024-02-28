@@ -21,6 +21,16 @@ public class FileUploadService {
         this.fileUploadLocation = Paths.get(fileUploadProperties.getUploadDir()).toAbsolutePath().normalize();
     }
 
+    public List<String> getFileNames() throws IOException {
+
+        // Returns the name of all files that were uploaded
+        List<String> fileNames = Files.list(fileUploadLocation)
+                .map(Path::getFileName)
+                .map(Path::toString).collect(Collectors.toList());
+
+        return fileNames;
+    }
+
     public String oneRandomBackwards () throws IOException {
         return new StringBuilder(getRandomElement(fileContextToList())).reverse().toString();
     }
@@ -60,7 +70,7 @@ public class FileUploadService {
         return fileInformation;
     }
 
-    public static List<String> getLargestLines(List<String> lines, int n) {
+    private List<String> getLargestLines(List<String> lines, int n) {
         //Sorts the list based on the length of strings in descending order
         Collections.sort(lines, (s1, s2) -> Integer.compare(s2.length(), s1.length()));
 
@@ -68,8 +78,12 @@ public class FileUploadService {
         return lines.subList(0, Math.min(n, lines.size()));
     }
 
-    public static String findFrequentLetter(String str) {
+    private String findFrequentLetter(String str) {
         str = str.replaceAll("\\s+", "");
+
+        if (str.isBlank()){
+            return "";
+        }
 
         Map<Character, Integer> frequency = new HashMap<>();
 
@@ -92,20 +106,10 @@ public class FileUploadService {
         return String.valueOf(frequentLetter);
     }
 
-    public String getRandomElement(List<String> list)
+    private String getRandomElement(List<String> list)
     {
         Random rand = new Random();
-        return list.get(rand.nextInt(list.size()));
-    }
-
-    public List<String> getFileNames() throws IOException {
-
-        // Returns the name of all files that were uploaded
-        List<String> fileNames = Files.list(fileUploadLocation)
-                .map(Path::getFileName)
-                .map(Path::toString).collect(Collectors.toList());
-
-        return fileNames;
+        return list.size() > 0 ? list.get(rand.nextInt(list.size())) : "";
     }
 
     private List<String> readFile(String s) throws IOException {
@@ -131,5 +135,12 @@ public class FileUploadService {
         }
 
         return lines;
+    }
+
+    public boolean hasFile() throws IOException {
+        if (getFileNames().isEmpty()){
+            return false;
+        }
+        return true;
     }
 }
